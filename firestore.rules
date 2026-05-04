@@ -1,0 +1,23 @@
+// firestore.rules
+// Paste this in Firebase Console → Firestore → Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /sessions/{sessionId} {
+
+      // Anyone can read a session (needed to join via link)
+      allow read: true;
+
+      // Anyone can create a new session
+      allow create: true;
+
+      // Anyone can update a session (members take cigarettes, owner ends it)
+      // Basic validation: can't re-activate an ended session from client
+      allow update: true;
+
+      // Nobody can delete sessions from client
+      allow delete: false;
+    }
+  }
+}

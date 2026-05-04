@@ -1,0 +1,141 @@
+/* src/styles/Session.css */
+
+.session-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.session-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.session-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  font-size: 22px;
+}
+
+.session-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.session-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.badge-active {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: .06em;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .5; }
+}
+
+.badge-ended {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text3);
+  letter-spacing: .06em;
+}
+
+.session-owner {
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.session-header-right {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Tabs ─────────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 13px 0;
+  cursor: pointer;
+  position: relative;
+  transition: color .2s;
+}
+.tab:hover { color: var(--text); }
+.tab.active {
+  color: var(--accent);
+}
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ── Tab content ──────────────────────────────────────────────── */
+.tab-content {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* ── Toast ────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 100;
+  white-space: nowrap;
+  animation: fadeIn .2s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

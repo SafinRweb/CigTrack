@@ -1,0 +1,57 @@
+/* src/styles/Join.css */
+
+.join-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at top, #1a1507 0%, var(--bg) 60%);
+}
+
+.join-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 36px 24px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.join-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.join-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.join-session-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.join-owner {
+  color: var(--text2);
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.join-error {
+  color: var(--red);
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.join-card .field {
+  text-align: left;
+  margin-bottom: 20px;
+}
