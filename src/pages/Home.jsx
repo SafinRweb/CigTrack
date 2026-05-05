@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CIGARETTE_BRANDS } from "../utils/cigarettes";
 import { createSession } from "../firebase/sessionService";
+import { getSession } from "../firebase/sessionService";
 import "../styles/Home.css";
 
 export default function Home() {
@@ -21,30 +22,21 @@ export default function Home() {
   const [joinLink, setJoinLink] = useState("");
   const [joinError, setJoinError] = useState("");
 
-  // ── PWA install state ─────────────────────────────────────────
-  const [installPrompt, setInstallPrompt] = useState(null);
-  const [isInstalled, setIsInstalled]     = useState(false);
-
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const [showIOSGuide, setShowIOSGuide] = useState(false);
+  // ── Resume last session ───────────────────────────────────────
+  const [lastSession, setLastSession] = useState(null);
 
   useEffect(() => {
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setIsInstalled(true);
-    }
-    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    const lastId = localStorage.getItem("last_session");
+    if (!lastId) return;
+    getSession(lastId).then((data) => {
+      if (data && data.active) {
+        setLastSession({ id: lastId, name: data.name, ownerName: data.ownerName });
+      } else {
+        // Session ended or gone, clean up
+        localStorage.removeItem("last_session");
+      }
+    });
   }, []);
-
-  const handleInstall = async () => {
-    if (isIOS) { setShowIOSGuide(true); return; }
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === "accepted") setIsInstalled(true);
-    setInstallPrompt(null);
-  };
 
   // ── Join via pasted link ──────────────────────────────────────
   const handleJoinLink = () => {
@@ -109,27 +101,26 @@ export default function Home() {
 
       {/* ── Hero ── */}
       <header className="hero">
-        <h1 className="hero-title">
-          <span className="cig-icon">🚬</span>
-          CigTrack
-        </h1>
+        <img src="/icon-192.png" alt="CigTrack" className="hero-logo" />
+        <div className="hero-wordmark">CigTrack</div>
         <p className="hero-desc">
           Start a session · Share the link · Split the bill
         </p>
-
-        {/* Install button — mobile only, hidden if already installed */}
-        {!isInstalled && (isIOS || installPrompt) && (
-          <button className="install-btn" onClick={handleInstall}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 21h14"/>
-            </svg>
-            {isIOS ? "Add to Home Screen" : "Install App"}
-          </button>
-        )}
-        {isInstalled && (
-          <div className="installed-pill">✓ Running as installed app</div>
-        )}
       </header>
+
+      {/* ── Resume last session ── */}
+      {lastSession && (
+        <div className="resume-banner" onClick={() => navigate(`/session/${lastSession.id}`)}>
+          <div className="resume-left">
+            <div className="resume-dot" />
+            <div>
+              <div className="resume-label">Active Session</div>
+              <div className="resume-name">{lastSession.name}</div>
+            </div>
+          </div>
+          <div className="resume-arrow">→</div>
+        </div>
+      )}
 
       {/* ── Join via link ── */}
       <section className="home-section">
@@ -158,7 +149,7 @@ export default function Home() {
           <label className="field-label">Session Name</label>
           <input
             className="field-input"
-            placeholder="e.g. Friday night at Raju's"
+            placeholder="e.g. Friday night at Saddam's"
             value={sessionName}
             onChange={(e) => setSessionName(e.target.value)}
           />
@@ -229,37 +220,6 @@ export default function Home() {
       </section>
 
       <p className="home-footer">CigTrack · Powered by Firebase</p>
-
-      {/* ── iOS install guide ── */}
-      {showIOSGuide && (
-        <div className="sheet-overlay" onClick={() => setShowIOSGuide(false)}>
-          <div className="sheet ios-guide" onClick={(e) => e.stopPropagation()}>
-            <div className="sheet-handle" />
-            <div className="sheet-title">Add to Home Screen</div>
-            <div className="ios-steps">
-              <div className="ios-step">
-                <div className="ios-step-num">1</div>
-                <div className="ios-step-text">
-                  Tap the <strong>Share</strong> button at the bottom of Safari
-                  <span className="ios-icon-hint">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
-                  </span>
-                </div>
-              </div>
-              <div className="ios-step">
-                <div className="ios-step-num">2</div>
-                <div className="ios-step-text">Scroll down and tap <strong>"Add to Home Screen"</strong></div>
-              </div>
-              <div className="ios-step">
-                <div className="ios-step-num">3</div>
-                <div className="ios-step-text">Tap <strong>"Add"</strong> — done! Open it from your home screen like any app.</div>
-              </div>
-            </div>
-            <div className="ios-note">⚠️ Must be opened in Safari, not Chrome</div>
-            <button className="create-btn" style={{marginTop: 16}} onClick={() => setShowIOSGuide(false)}>Got it</button>
-          </div>
-        </div>
-      )}
 
       {/* ── Bottom sheet brand picker ── */}
       {showPicker && (

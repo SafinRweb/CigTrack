@@ -27,7 +27,11 @@ export default function Session() {
   useEffect(() => {
     const stored = localStorage.getItem(`member_${sessionId}`);
     if (!stored) navigate(`/join/${sessionId}`, { replace: true });
-    else setMemberId(stored);
+    else {
+      setMemberId(stored);
+      // Save as last active session so user can resume from home
+      localStorage.setItem("last_session", sessionId);
+    }
   }, [sessionId, navigate]);
 
   const flash = (msg) => {
@@ -65,6 +69,7 @@ export default function Session() {
 
   const handleEndSession = async () => {
     await endSession(sessionId);
+    localStorage.removeItem("last_session");
     setShowEnd(false);
     setTab("members");
   };
